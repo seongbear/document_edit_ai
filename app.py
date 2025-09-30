@@ -29,6 +29,11 @@ def get_services():
     }
 
 def main():
+    st.set_page_config(
+        page_title="Word Document LLM Assistant",
+        page_icon="📝",
+        layout="wide"
+    )
     st.title("📝 Word Document LLM Assistant")
     st.markdown("*AI-powered editing for your Microsoft 365 Word documents*")
     
