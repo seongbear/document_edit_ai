@@ -1,20 +1,19 @@
 import os
 import json
-from openai import OpenAI
+from google import genai
+from google.genai import types
 from typing import Dict, Any, List, Optional
 
 class LLMService:
     """Service for LLM-powered document editing"""
     
     def __init__(self):
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("GEMINI_API_KEY")
         if not api_key:
-            raise Exception("OPENAI_API_KEY environment variable is required")
+            raise Exception("GEMINI_API_KEY environment variable is required")
         
-        self.client = OpenAI(api_key=api_key)
-        # the newest OpenAI model is "gpt-5" which was released August 7, 2025.
-        # do not change this unless explicitly requested by the user
-        self.model = "gpt-5"
+        self.client = genai.Client(api_key=api_key)
+        self.model = "gemini-2.5-flash"
     
     def process_edit_request(self, document_content: str, user_request: str) -> Dict[str, Any]:
         """Process a user's edit request for a document"""
@@ -48,21 +47,22 @@ User Request: {user_request}
 
 Please edit the document according to the user's request and respond with the JSON format specified."""
 
-            response = self.client.chat.completions.create(
+            response = self.client.models.generate_content(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
+                contents=[
+                    types.Content(role="user", parts=[types.Part(text=user_prompt)])
                 ],
-                response_format={"type": "json_object"}
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    response_mime_type="application/json"
+                )
             )
             
-            content = response.choices[0].message.content
+            content = response.text
             if not content:
                 raise Exception("Empty response from LLM")
             result = json.loads(content)
             
-            # Validate response structure
             if not all(key in result for key in ["edited_content", "explanation"]):
                 raise Exception("Invalid response format from LLM")
             
@@ -90,16 +90,18 @@ Respond with JSON in this format:
 
             user_prompt = f"Please analyze this document:\n\n{document_content}"
 
-            response = self.client.chat.completions.create(
+            response = self.client.models.generate_content(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
+                contents=[
+                    types.Content(role="user", parts=[types.Part(text=user_prompt)])
                 ],
-                response_format={"type": "json_object"}
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    response_mime_type="application/json"
+                )
             )
             
-            content = response.choices[0].message.content
+            content = response.text
             if not content:
                 raise Exception("Empty response from LLM")
             return json.loads(content)
@@ -136,12 +138,12 @@ Respond with JSON in this format:
             
             prompt = f"Please summarize the following document {instruction}:\n\n{document_content}"
             
-            response = self.client.chat.completions.create(
+            response = self.client.models.generate_content(
                 model=self.model,
-                messages=[{"role": "user", "content": prompt}]
+                contents=prompt
             )
             
-            content = response.choices[0].message.content
+            content = response.text
             return content if content else ""
             
         except Exception as e:
@@ -157,15 +159,17 @@ Respond with JSON in this format:
             else:
                 user_prompt = message
             
-            response = self.client.chat.completions.create(
+            response = self.client.models.generate_content(
                 model=self.model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt}
-                ]
+                contents=[
+                    types.Content(role="user", parts=[types.Part(text=user_prompt)])
+                ],
+                config=types.GenerateContentConfig(
+                    system_instruction=system_prompt
+                )
             )
             
-            content = response.choices[0].message.content
+            content = response.text
             return content if content else ""
             
         except Exception as e:

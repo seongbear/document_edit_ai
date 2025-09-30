@@ -245,8 +245,8 @@ def main():
 
 if __name__ == "__main__":
     # Check for required environment variables
-    if not os.getenv("OPENAI_API_KEY"):
-        st.error("⚠️ OPENAI_API_KEY environment variable is required")
+    if not os.getenv("GEMINI_API_KEY"):
+        st.error("⚠️ GEMINI_API_KEY environment variable is required")
         st.stop()
     
     main()
