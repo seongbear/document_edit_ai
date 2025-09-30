@@ -1,6 +1,7 @@
 # Overview
 
 This is a Streamlit-based web application that serves as an AI-powered editing assistant for Microsoft Word documents stored in OneDrive. The application allows users to authenticate with their Microsoft 365 account, browse Word documents from OneDrive, and use natural language commands to edit documents with the help of Google's Gemini AI. The edited documents can be saved back to OneDrive, creating a seamless document editing workflow.
+<img width="1072" height="610" alt="image" src="https://github.com/user-attachments/assets/4ada8d7c-cd4d-4546-b580-e6d2ddc6bd3f" />
 
 # User Preferences
 
