@@ -23,10 +23,13 @@ class OneDriveClient:
         hostname = os.getenv('REPLIT_CONNECTORS_HOSTNAME')
         x_replit_token = None
         
-        if os.getenv('REPL_IDENTITY'):
-            x_replit_token = 'repl ' + os.getenv('REPL_IDENTITY')
-        elif os.getenv('WEB_REPL_RENEWAL'):
-            x_replit_token = 'depl ' + os.getenv('WEB_REPL_RENEWAL')
+        repl_identity = os.getenv('REPL_IDENTITY')
+        web_repl_renewal = os.getenv('WEB_REPL_RENEWAL')
+        
+        if repl_identity:
+            x_replit_token = 'repl ' + repl_identity
+        elif web_repl_renewal:
+            x_replit_token = 'depl ' + web_repl_renewal
         
         if not x_replit_token:
             raise Exception('X_REPLIT_TOKEN not found for repl/depl')
@@ -62,7 +65,7 @@ class OneDriveClient:
         except:
             return False
     
-    async def _make_graph_request(self, endpoint: str, method: str = 'GET', data: bytes = None) -> Dict[str, Any]:
+    async def _make_graph_request(self, endpoint: str, method: str = 'GET', data: Optional[bytes] = None) -> Dict[str, Any]:
         """Make authenticated request to Microsoft Graph API"""
         access_token = await self._get_access_token()
         

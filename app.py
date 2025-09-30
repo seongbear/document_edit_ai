@@ -102,10 +102,11 @@ def main():
             
             if user_message:
                 # Add user message to history
+                from datetime import datetime
                 st.session_state.conversation_history.append({
                     "role": "user",
                     "content": user_message,
-                    "timestamp": st.timestamp()
+                    "timestamp": datetime.now().isoformat()
                 })
                 
                 with st.spinner("AI is processing your request..."):
@@ -123,7 +124,7 @@ def main():
                         st.session_state.conversation_history.append({
                             "role": "assistant",
                             "content": response['explanation'],
-                            "timestamp": st.timestamp()
+                            "timestamp": datetime.now().isoformat()
                         })
                         
                         st.success("Document updated successfully!")
@@ -135,7 +136,7 @@ def main():
                         st.session_state.conversation_history.append({
                             "role": "assistant",
                             "content": error_msg,
-                            "timestamp": st.timestamp()
+                            "timestamp": datetime.now().isoformat()
                         })
             
             # Save document button

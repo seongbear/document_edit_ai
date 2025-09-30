@@ -102,7 +102,7 @@ class DocumentProcessor:
                     word_count += para_info['word_count']
                     
                     # Check if it's a heading
-                    if paragraph.style and 'Heading' in paragraph.style.name:
+                    if paragraph.style and paragraph.style.name and 'Heading' in paragraph.style.name:
                         structure['headings'].append({
                             'level': paragraph.style.name,
                             'text': text,

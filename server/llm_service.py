@@ -57,7 +57,10 @@ Please edit the document according to the user's request and respond with the JS
                 response_format={"type": "json_object"}
             )
             
-            result = json.loads(response.choices[0].message.content)
+            content = response.choices[0].message.content
+            if not content:
+                raise Exception("Empty response from LLM")
+            result = json.loads(content)
             
             # Validate response structure
             if not all(key in result for key in ["edited_content", "explanation"]):
@@ -96,7 +99,10 @@ Respond with JSON in this format:
                 response_format={"type": "json_object"}
             )
             
-            return json.loads(response.choices[0].message.content)
+            content = response.choices[0].message.content
+            if not content:
+                raise Exception("Empty response from LLM")
+            return json.loads(content)
             
         except Exception as e:
             raise Exception(f"Failed to analyze document: {str(e)}")
@@ -135,7 +141,8 @@ Respond with JSON in this format:
                 messages=[{"role": "user", "content": prompt}]
             )
             
-            return response.choices[0].message.content
+            content = response.choices[0].message.content
+            return content if content else ""
             
         except Exception as e:
             raise Exception(f"Failed to summarize document: {str(e)}")
@@ -158,7 +165,8 @@ Respond with JSON in this format:
                 ]
             )
             
-            return response.choices[0].message.content
+            content = response.choices[0].message.content
+            return content if content else ""
             
         except Exception as e:
             raise Exception(f"Failed to generate chat response: {str(e)}")
